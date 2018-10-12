@@ -165,10 +165,14 @@ bool CPlayer::Pulse()
 		}
 	}
 	for(auto& v : g_pGameScene->m_EnemyManager->m_Enemy)
-		if(v != nullptr && !v->m_type)
-			if (v->hitBox(m_hitRect))
-				if (v->hitPolyton(this, g_pGameScene->m_matWorld))
-					g_pGameScene->m_isGameOver = true;
+	{
+		if (v == nullptr || v->m_type != 0) continue;
+		if (!v->hitBox(m_hitRect)) continue;
+		if (!v->hitPolyton(this, g_pGameScene->m_matWorld)) continue;
+
+		g_pGameScene->m_isGameOver = true;
+	}
+
 	if ((g_pKeyCodeScan('q') || g_pKeyCodeScan('Q')) && !m_RedZone)
 	{
 		m_RedZone = true;
@@ -210,8 +214,8 @@ bool CPlayer::Pulse()
 			}
 			if (m_TimerWhirlWind.IsElapseTimer()) {
 				m_WhirlWind = false;
-				for (int i = 0; i < m_BulletWhirlWind.size(); ++i)
-					delete m_BulletWhirlWind[i];
+
+				for (const auto& p : m_BulletWhirlWind) delete p;
 				m_BulletWhirlWind.clear();
 			}
 		}

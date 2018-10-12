@@ -24,32 +24,22 @@ void CEnemyManager::Terminate()
 bool CEnemyManager::Pulse()
 {
 	if (m_sortTime.IsValidTimer())
-		if (m_sortTime.IsElapseTimer()) {
-			if (m_Enemy.size() > 0)
-				std::sort(begin(m_Enemy), end(m_Enemy), [](CEnemyBase* p, CEnemyBase* q) { return p->m_Point.distance({}) > q->m_Point.distance({}); });
+	{
+		if (m_sortTime.IsElapseTimer())
+		{
+			if (m_Enemy.size() > 0) m_Enemy.sort([] (CEnemyBase* p, CEnemyBase* q) { return p->m_Point.distance({}) > q->m_Point.distance({}); });
 			m_sortTime.InitTimer(1000);
 		}
-
+	}
 	
 	for (auto itEnemy = std::begin(m_Enemy); itEnemy != std::end(m_Enemy);)
 	{
-		if (*itEnemy == nullptr) 
-		{
-			itEnemy = m_Enemy.erase(itEnemy);
-			continue;
-		}
 		(*itEnemy)->Pulse();
 
 		auto& bullet = g_pGameScene->m_BulletManager->m_Bullet;
 
 		for (auto itBullet = std::begin(bullet); itEnemy != std::end(m_Enemy) && itBullet != std::end(bullet);) 
 		{
-			if (*itEnemy == nullptr) 
-			{
-				itEnemy = m_Enemy.erase(itEnemy);
-				continue;
-			}
-
 			if (!(*itEnemy)->hitBox((*itBullet)->m_hitRect)) { ++itBullet; continue; }
 			if (!(*itEnemy)->hitPolyton((*itBullet), g_pGameScene->m_matWorld)) { ++itBullet; continue; }
 
@@ -82,6 +72,5 @@ bool CEnemyManager::Pulse()
 void CEnemyManager::Render(Matrix mat)
 {
 	for (auto& v : m_Enemy)
-		if(v != nullptr)
-			v->Render(mat);
+		v->Render(mat);
 }

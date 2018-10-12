@@ -49,27 +49,28 @@ bool CBulletGuided::Pulse()
 {
 	if (!m_activeState) m_activeState = true;
 
-
-	if (g_pGameScene->m_EnemyManager->m_Enemy.size() > 0)
+	auto& con_enemy = g_pGameScene->m_EnemyManager->m_Enemy;
+	if (!con_enemy.empty())
 	{
 		CEnemyBase* bs = nullptr;
 		Vector target;
 		float distance = -1;
-		for (int i = 0; i < g_pGameScene->m_EnemyManager->m_Enemy.size(); ++i)
-		{
-			if(g_pGameScene->m_EnemyManager->m_Enemy[i])
-				if (float dist = m_Point.distance(g_pGameScene->m_EnemyManager->m_Enemy[i]->m_Point); (dist < distance || distance < 0) && dist < 1600)
-				{
-					Vector vec{ cosf(m_rotate*PI), sinf(m_rotate*PI) };
-					Vector vec2{ float(g_pGameScene->m_EnemyManager->m_Enemy[i]->m_Point.x - m_Point.x), float(g_pGameScene->m_EnemyManager->m_Enemy[i]->m_Point.y - m_Point.y) };
-					if (vec.dot(vec2) < -1600)
-						continue;
 
-					distance = dist;
-					target = g_pGameScene->m_EnemyManager->m_Enemy[i]->m_Point;
-					bs = g_pGameScene->m_EnemyManager->m_Enemy[i];
-				}
+		for (const auto& enemy : con_enemy)
+		{
+			if (float dist = m_Point.distance(enemy->m_Point); (dist < distance || distance < 0) && dist < 1600)
+			{
+				Vector vec{ cosf(m_rotate*PI), sinf(m_rotate*PI) };
+				Vector vec2{ float(enemy->m_Point.x - m_Point.x), float(enemy->m_Point.y - m_Point.y) };
+				if (vec.dot(vec2) < -1600)
+					continue;
+
+				distance = dist;
+				target = enemy->m_Point;
+				bs = enemy;
+			}
 		}
+
 		if (distance > 0 && distance < 1600)
 		{
 			Vector vec{ cosf((m_rotate+0.5)*PI), sinf((m_rotate+0.5)*PI) };
