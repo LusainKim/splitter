@@ -14,7 +14,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
+# *.dll
 
 # Fortran module files
 *.mod
@@ -26,26 +26,10 @@
 *.a
 *.lib
 
-# Executables
-*.exe
-*.out
-*.app
-/Release
-/Debug
-/x64
-/*.user
-/*.vcxproj
-/*.filters
-/*.filters
-/*.user
-/*.vcxproj
-/*.user
-/*.vcxproj
-/*.filters
-*.vcxproj
-*.filters
-*.user
-/*.vcxproj
-/*.user
-splitter.vcxproj.filters
-splitter.vcxproj.filters
+# Build Data
+.vs/
+x64/[Dd]ebug/
+x64/[Rr]elease/
+
+# Created Data
+score.txt
