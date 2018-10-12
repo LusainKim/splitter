@@ -8,10 +8,15 @@ CBaseRender::CBaseRender()
 	m_bIsHit = false;
 	m_pImage = nullptr;
 	m_pStr = nullptr;
+
+	m_Polygon = nullptr;
 }
 
 CBaseRender::~CBaseRender()
 {
+	if (m_Polygon) delete[] m_Polygon;
+	if (m_pImage) delete m_pImage;
+	if (m_pStr) delete[] m_pStr;
 }
 
 void CBaseRender::Render(Matrix matWorld)

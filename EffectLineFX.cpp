@@ -32,6 +32,7 @@ CEffectLineFX::CEffectLineFX(Vector pt, float distance, COLORREF color)
 
 CEffectLineFX::~CEffectLineFX()
 {
+	if (m_TargetPolygon) delete[] m_TargetPolygon;
 }
 
 bool CEffectLineFX::Initialize()

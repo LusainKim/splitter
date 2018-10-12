@@ -26,7 +26,7 @@ CTearElement::CTearElement(Vector pt, int polyAngle, float distance, COLORREF co
 
 CTearElement::~CTearElement()
 {
-	
+	if (m_TargetPolygon) delete[] m_TargetPolygon;
 }
 
 bool CTearElement::Initialize()

@@ -23,8 +23,12 @@ bool CBaseObject::hitBox(RECT rt)
 bool CBaseObject::hitPolyton(const CBaseObject* obj, Matrix matWorld)
 {
 	Matrix mat;
-	POINT* A = new POINT[m_NumPolygon];
-	POINT* B = new POINT[obj->m_NumPolygon];
+	std::vector<POINT> A { };
+	std::vector<POINT> B { };
+
+	A.resize(m_NumPolygon);
+	B.resize(obj->m_NumPolygon);
+
 	for (int i = 0; i < m_NumPolygon; ++i)
 	{
 		mat.Scale(m_scale);

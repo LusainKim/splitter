@@ -29,45 +29,53 @@ bool CEnemyManager::Pulse()
 				std::sort(begin(m_Enemy), end(m_Enemy), [](CEnemyBase* p, CEnemyBase* q) { return p->m_Point.distance({}) > q->m_Point.distance({}); });
 			m_sortTime.InitTimer(1000);
 		}
-	for (int i = 0; i < m_Enemy.size(); ++i)
+
+	
+	for (auto itEnemy = std::begin(m_Enemy); itEnemy != std::end(m_Enemy);)
 	{
-		if (m_Enemy[i] == nullptr)
+		if (*itEnemy == nullptr) 
 		{
-			m_Enemy.erase(m_Enemy.begin() + i);
-			--i;
+			itEnemy = m_Enemy.erase(itEnemy);
 			continue;
 		}
-		m_Enemy[i]->Pulse();
-		for (int j = 0; j < g_pGameScene->m_BulletManager->m_Bullet.size() && i < m_Enemy.size(); ++j)
-			if (m_Enemy[i] == nullptr)
+		(*itEnemy)->Pulse();
+
+		auto& bullet = g_pGameScene->m_BulletManager->m_Bullet;
+
+		for (auto itBullet = std::begin(bullet); itEnemy != std::end(m_Enemy) && itBullet != std::end(bullet);) 
+		{
+			if (*itEnemy == nullptr) 
 			{
-				m_Enemy.erase(m_Enemy.begin() + i);
-				--i;
+				itEnemy = m_Enemy.erase(itEnemy);
 				continue;
 			}
-			else if (m_Enemy[i]->hitBox(g_pGameScene->m_BulletManager->m_Bullet[j]->m_hitRect))
+
+			if (!(*itEnemy)->hitBox((*itBullet)->m_hitRect)) { ++itBullet; continue; }
+			if (!(*itEnemy)->hitPolyton((*itBullet), g_pGameScene->m_matWorld)) { ++itBullet; continue; }
+
+			(*itEnemy)->m_Hp -= (*itBullet)->m_damage;
+
+			if ((*itEnemy)->m_Hp <= 0)
 			{
-				if (m_Enemy[i]->hitPolyton(g_pGameScene->m_BulletManager->m_Bullet[j], g_pGameScene->m_matWorld))
-				{
-					if (g_pGameScene->m_Player->m_gunType == 4);
-					else if (--(g_pGameScene->m_BulletManager->m_Bullet[j]->m_hp) < 0)
-					{
-						delete g_pGameScene->m_BulletManager->m_Bullet[j];
-						g_pGameScene->m_BulletManager->m_Bullet.erase(g_pGameScene->m_BulletManager->m_Bullet.begin() + j);
-					}
-					else
-					{
-						g_pGameScene->m_BulletManager->m_Bullet[j]->m_direction += 1 - 0.4 + 1.8 * (rand() % 200 / 200.0);
-					}
-					m_Enemy[i]->m_Hp -= g_pGameScene->m_BulletManager->m_Bullet[j]->m_damage;
-					if (m_Enemy[i]->m_Hp <= 0)
-					{
-						delete m_Enemy[i];
-						m_Enemy.erase(m_Enemy.begin() + i);
-						--i;
-					}
-				}
+				delete (*itEnemy);
+				itEnemy = m_Enemy.erase(itEnemy);
 			}
+
+			if (g_pGameScene->m_Player->m_gunType == 4) ++itBullet;
+			else if (--((*itBullet)->m_hp) < 0) 
+			{
+				delete (*itBullet);
+				itBullet = bullet.erase(itBullet);
+			}
+			else
+			{
+				(*itBullet)->m_direction += 1 - 0.4 + 1.8 * (rand() % 200 / 200.0);
+				++itBullet;
+			}
+
+		}
+
+		if (itEnemy != std::end(m_Enemy)) ++itEnemy;
 	}
 	return true;
 }

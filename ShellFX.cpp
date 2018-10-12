@@ -31,6 +31,7 @@ CShellFX::CShellFX(Vector pt, COLORREF color, float speed, float direction)
 
 CShellFX::~CShellFX()
 {
+	if (m_TargetPolygon) delete[] m_TargetPolygon;
 }
 
 bool CShellFX::Initialize()
